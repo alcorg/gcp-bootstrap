@@ -67,6 +67,14 @@ The Go program (`main.go` and supporting files) performs the following actions b
 11. Enables versioning on the GCS bucket.
 12. (Optional) Generates and downloads a JSON key for the Terraform Service Account if `generate_tf_sa_key` is set to `true` in the config.
 
+## Troubleshooting
+
+If you encounter any errors or unexpected behavior while running the bootstrap program, please consult the project's troubleshooting documentation here:
+
+**[Wiki Troubleshooting Section](https://github.com/alcorg/gcp-bootstrap/wiki/Troubleshooting)**
+
+Common issues often relate to insufficient IAM permissions for the authenticated `gcloud` user.
+
 ## Security Considerations
 
 *   **Service Account Key (`generate_tf_sa_key: true`):** If you choose to generate a Service Account key, **treat this `.json` file like a password**. Do not commit it to Git. Ensure it's listed in your `.gitignore`. For CI/CD pipelines (like GitHub Actions), using **Workload Identity Federation** is strongly recommended over storing long-lived keys.
