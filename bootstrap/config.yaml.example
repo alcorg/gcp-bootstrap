@@ -1,0 +1,57 @@
+# -----------------------------------------------------------------------------
+# GCP Bootstrap Configuration
+# -----------------------------------------------------------------------------
+# Instructions:
+# 1. Copy this file to 'config.yaml'.
+# 2. Replace the placeholder values below with your actual information.
+# 3. Ensure you have completed the manual prerequisites (GCP Account, Org, Billing Account).
+# 4. Ensure 'gcloud' CLI is installed and authenticated (`gcloud auth login`, `gcloud auth application-default login`).
+# -----------------------------------------------------------------------------
+
+# --- GCP Organization & Billing ---
+# These MUST be obtained manually from the GCP Console beforehand.
+billing_account_id: "0X0X0X-XXXXXX-XXXXXX" # REQUIRED: Your GCP Billing Account ID (e.g., 012345-6789AB-CDEF01)
+organization_id: "123456789012"          # OPTIONAL but Recommended: Your GCP Organization ID (numeric). Leave blank or comment out if not using an Org.
+
+# --- GCP Project Configuration ---
+project_id: "your-unique-project-id"     # REQUIRED: Choose a globally unique ID for your new project (lowercase letters, digits, hyphens).
+project_name: "My Awesome App Project"   # REQUIRED: A user-friendly name for your project.
+project_region: "europe-west1"           # REQUIRED: Default region for regional resources (e.g., GCS bucket). Choose one close to you.
+
+# --- Terraform Backend Configuration ---
+tf_state_bucket_name: "your-unique-tfstate-bucket-name-xyz" # REQUIRED: Choose a globally unique name for the GCS bucket storing Terraform state.
+
+# --- Terraform Service Account Configuration ---
+# This SA will be created by the script and granted permissions to manage resources via Terraform.
+tf_service_account_name: "terraform-admin" # REQUIRED: Short name for the Service Account (e.g., terraform-admin, tf-deployer).
+# The full email will be: terraform-admin@your-unique-project-id.iam.gserviceaccount.com
+
+# --- Optional: Service Account Key Generation ---
+# Set to true to generate and download a JSON key for the Terraform SA.
+# WARNING: Handle this key securely! Storing it is a security risk.
+#          Workload Identity Federation is preferred for CI/CD (GitHub Actions).
+#          Set to false if you plan to use WIF or other auth methods exclusively.
+generate_tf_sa_key: false
+tf_sa_key_path: "./terraform-admin-key.json" # Path where the key will be saved if generate_tf_sa_key is true.
+
+# --- APIs to Enable ---
+# List of essential APIs needed for Terraform to start managing resources.
+# Application-specific APIs (Cloud Run, SQL etc) should ideally be enabled *by* Terraform later.
+enable_apis:
+  - cloudresourcemanager.googleapis.com
+  - iam.googleapis.com
+  - storage-api.googleapis.com # Alias for storage.googleapis.com used by gcloud services enable
+  - serviceusage.googleapis.com
+  # - cloudbilling.googleapis.com # Needed if TF manages billing linking
+  # - compute.googleapis.com # Add if needed early by TF
+
+# --- IAM Roles for Terraform Service Account ---
+# List of roles to grant the Terraform SA on the project.
+# WARNING: 'owner' is very broad. Grant more granular roles for production.
+tf_service_account_project_roles:
+  - roles/owner # Or roles/storage.admin, roles/iam.serviceAccountAdmin, etc.
+
+# Role to grant on the Billing Account (needed if TF will link other projects later)
+tf_service_account_billing_role: "roles/billing.user"
+
+

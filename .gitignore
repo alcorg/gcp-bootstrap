@@ -23,3 +23,26 @@ go.work.sum
 
 # env file
 .env
+
+# Terraform files
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfplan
+*.tfvars
+*.auto.tfvars
+
+# GCP Service Account Keys
+*.json
+
+# Local config
+config.yaml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Go build artifacts
+gcp-bootstrap
+
+config.yaml
