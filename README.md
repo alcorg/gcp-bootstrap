@@ -67,6 +67,14 @@ The Go program (`main.go` and supporting files) performs the following actions b
 11. Enables versioning on the GCS bucket.
 12. (Optional) Generates and downloads a JSON key for the Terraform Service Account if `generate_tf_sa_key` is set to `true` in the config.
 
+## Idempotency
+
+This bootstrap program is designed to be **largely idempotent**. This means you can safely re-run the script multiple times with the same `config.yaml` file.
+
+*   **How it works:** The script checks if resources (like the project, service account, GCS bucket) already exist before attempting to create them. It also handles "already exists" errors gracefully during creation steps. Actions like enabling APIs or adding IAM bindings are typically idempotent on the GCP side as well.
+*   **Benefit:** If the script fails partway through (e.g., due to a transient network issue or a permission error that you subsequently fix), you can simply re-run it. It will skip the steps that were already successfully completed and attempt the failed or subsequent steps again.
+*   **Exception:** The only non-idempotent action is the optional generation of a Service Account key (`generate_tf_sa_key: true`), which would create a *new* key file on each run. This is skipped by default (`false`).
+
 ## Troubleshooting
 
 If you encounter any errors or unexpected behavior while running the bootstrap program, please consult the project's troubleshooting documentation here:
